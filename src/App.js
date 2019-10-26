@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { AppTopbar } from './AppTopbar';
 import { AppMenu } from './AppMenu';
 import { Route } from 'react-router-dom';
-import { Dashboard } from './components/Dashboard';
+import Reports from '../src/pages/Reports';
 import Players from '../src/pages/Players';
 import 'primereact/resources/themes/nova-light/theme.css';
 import 'primereact/resources/primereact.min.css';
@@ -83,7 +83,7 @@ class App extends Component {
   createMenu() {
     this.menu = [
       {
-        label: 'Dashboard',
+        label: 'Players',
         icon: 'pi pi-fw pi-home',
         command: () => {
           window.location = '#/';
@@ -93,7 +93,7 @@ class App extends Component {
         label: 'Reports',
         icon: 'pi pi-fw pi-question',
         command: () => {
-          window.location = '#/players';
+          window.location = '#/reports';
         }
       }];
   }
@@ -153,8 +153,8 @@ class App extends Component {
           <AppMenu model={this.menu} onMenuItemClick={this.onMenuItemClick} />
         </div>
         <div className="layout-main">
-          <Route path="/" exact component={Dashboard} />
-          <Route path="/players" component={Players} />
+          <Route path="/" exact component={Players} />
+          <Route path="/reports" component={Reports} />
         </div>
         <div className="layout-mask"></div>
       </div>
