@@ -84,14 +84,14 @@ class App extends Component {
     this.menu = [
       {
         label: 'Players',
-        icon: 'pi pi-fw pi-home',
+        icon: 'pi pi-fw pi-user',
         command: () => {
           window.location = '#/';
         }
       },
       {
         label: 'Reports',
-        icon: 'pi pi-fw pi-question',
+        icon: 'pi pi-fw pi-table',
         command: () => {
           window.location = '#/reports';
         }

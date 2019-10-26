@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Panel } from 'primereact/panel';
 import { InputSwitch } from 'primereact/inputswitch';
 import { Button } from 'primereact/button';
@@ -6,9 +6,32 @@ import { InputText } from 'primereact/inputtext';
 import { Chart } from 'primereact/chart';
 import { toArray } from '../../util/reshape';
 import { connect } from 'react-redux';
+import { requestUpdatePlayer } from '../../ducks/players';
 import PlayersHotloaders from '../../components/hotloaders/PlayersHotloaders';
 
-const Players = ({ players }) => {
+export const Players = ({ players, _requestUpdatePlayer }) => {
+  const [selectedValue, setSelectedValue] = useState('');
+  const handleChange = e => setSelectedValue(e.target.value);
+  const handleCheckin = e => {
+    const updatedPlayer = { ...players[e.target.id], checkedin: !players[e.target.id].checkedin };
+    _requestUpdatePlayer(updatedPlayer);
+  };
+  const filterByAnyValue = (arrayOfObjects, searchTeam) => {
+    return (
+      arrayOfObjects &&
+      Object.keys(arrayOfObjects).length !== 0 &&
+      toArray(arrayOfObjects).filter(playerObject =>
+        Object.keys(playerObject).some(
+          key =>
+            key !== 'id' &&
+            playerObject[key]
+              .toString()
+              .toLowerCase()
+              .includes(searchTeam.toString().toLowerCase())
+        )
+      )
+    );
+  };
   const groupByGrade =
     players &&
     Object.keys(players).length !== 0 &&
@@ -31,12 +54,6 @@ const Players = ({ players }) => {
     players &&
     Object.keys(players).length !== 0 &&
     toArray(players).filter(({ checkedin }) => checkedin === true).length;
-  const handleChange = event => {
-    console.log(event.target.value);
-  };
-  const handleCheckin = event => {
-    console.log(event.target.id);
-  };
   const polarData = {
     datasets: [
       {
@@ -88,7 +105,7 @@ const Players = ({ players }) => {
             <span>TR</span>
           </div>
           <div className="highlight-details ">
-            <i className="pi pi-search" />
+            <i className="pi pi-briefcase" />
             <span>In Attendence</span>
             <span className="count">{groupByBelongTo['TRAVEL'] || 0}</span>
           </div>
@@ -103,7 +120,7 @@ const Players = ({ players }) => {
             <span>IN</span>
           </div>
           <div className="highlight-details ">
-            <i className="pi pi-question-circle" />
+            <i className="pi pi-home" />
             <span>In Attendence</span>
             <span className="count">{groupByBelongTo['INHOUSE'] || 0}</span>
           </div>
@@ -120,7 +137,7 @@ const Players = ({ players }) => {
           <ul>
             {players &&
               Object.keys(players).length !== 0 &&
-              toArray(players).map(
+              filterByAnyValue(players, selectedValue).map(
                 ({ firstname, lastname, grade, team, checkedin, id }) => {
                   return (
                     <li>
@@ -158,4 +175,11 @@ const Players = ({ players }) => {
   );
 };
 
-export default connect(({ players }) => ({ players }))(Players);
+export default connect(
+  ({ players }) => ({ players }),
+  dispatch => ({
+    _requestUpdatePlayer: updatedPlayer => {
+      dispatch(requestUpdatePlayer(updatedPlayer));
+    }
+  })
+)(Players);
